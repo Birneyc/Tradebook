@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TenantPass — UK Tenant Vetting</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'DM Sans',sans-serif;background:#f0f4f8;color:#1a2332;font-size:15px;}
+input,select,button,textarea{font-family:inherit;font-size:15px;}
+.pg{display:none;}.pg.on{display:block;}
+/* Login — simple stacked layout, no flex centering traps */
+.lp-top{background:#0d3b5e;padding:2rem 1.5rem 1.5rem;text-align:center;}
+.lp-logo{font-family:'Playfair Display',serif;font-size:1.8rem;color:#fff;}
+.lp-tag{font-size:.73rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em;margin-top:3px;}
+.lp-body{padding:1.25rem;max-width:440px;margin:0 auto;}
+.lp-card{background:#fff;border-radius:12px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.09);margin-bottom:.75rem;}
+.lp-card h2{font-family:'Playfair Display',serif;font-size:1.35rem;color:#0d3b5e;margin-bottom:.3rem;}
+.lp-card>p{font-size:.83rem;color:#64748b;margin-bottom:1rem;}
+.hint{background:#e8f0f7;border-radius:8px;padding:.7rem .9rem;font-size:.77rem;color:#0d3b5e;margin-bottom:1rem;line-height:1.65;}
+.hint strong{font-weight:600;}
+/* Forms */
+.fld{margin-bottom:.85rem;}
+.fld label{display:block;font-size:.77rem;font-weight:500;color:#475569;margin-bottom:4px;}
+.fld input,.fld select{width:100%;padding:.65rem .8rem;border:1.5px solid #e2e8f0;border-radius:8px;background:#fff;color:#1a2332;-webkit-appearance:none;appearance:none;}
+.fld input:focus,.fld select:focus{outline:none;border-color:#0d3b5e;}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
+.ferr{font-size:.77rem;color:#991b1b;margin-top:4px;display:none;}
+.req{color:#991b1b;}
+/* Buttons */
+.btn{display:block;width:100%;padding:.75rem;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;border:none;text-align:center;transition:opacity .15s;}
+.btn:disabled{opacity:.55;cursor:not-allowed;}
+.btn-nv{background:#0d3b5e;color:#fff;}
+.btn-ol{background:#fff;color:#0d3b5e;border:1.5px solid #0d3b5e;margin-top:.6rem;}
+.btn-gd{background:#c07c2a;color:#fff;}
+.btn-sm{padding:.45rem .9rem;font-size:.82rem;display:inline-block;width:auto;border-radius:6px;}
+.lnk{background:none;border:none;color:#0d3b5e;font-weight:500;cursor:pointer;font-size:.84rem;text-decoration:underline;padding:0;}
+.sw{text-align:center;font-size:.84rem;color:#64748b;margin-top:.75rem;}
+.or{text-align:center;font-size:.79rem;color:#94a3b8;margin:.65rem 0;}
+/* Type tabs */
+.ttabs{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1rem;}
+.ttab{border:2px solid #e2e8f0;border-radius:8px;padding:.7rem .5rem;text-align:center;cursor:pointer;background:#fff;}
+.ttab.on{border-color:#0d3b5e;background:#e8f0f7;}
+.ttab-ic{font-size:1.25rem;display:block;margin-bottom:3px;}
+.ttab-l{font-size:.81rem;font-weight:600;color:#1a2332;}
+.ttab-s{font-size:.69rem;color:#94a3b8;}
+/* App shell */
+.shell{display:none;min-height:100vh;background:#f0f4f8;}.shell.on{display:block;}
+/* Top nav */
+.tnav{background:#0d3b5e;padding:.8rem 1rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.tnav-logo{font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;}
+.tnav-av{width:30px;height:30px;border-radius:50%;background:#c07c2a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;}
+.tnav-menu{background:none;border:1.5px solid rgba(255,255,255,.35);border-radius:6px;color:#fff;padding:4px 9px;font-size:1rem;cursor:pointer;line-height:1;}
+/* Drawer */
+.dov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;}.dov.on{display:block;}
+.drw{position:fixed;top:0;left:0;bottom:0;width:260px;background:#0d3b5e;z-index:201;transform:translateX(-100%);transition:transform .25s;display:flex;flex-direction:column;overflow-y:auto;}
+.drw.on{transform:translateX(0);}
+.drw-logo{padding:1.4rem 1.2rem .9rem;border-bottom:1px solid rgba(255,255,255,.1);}
+.drw-logo-n{font-family:'Playfair Display',serif;font-size:1.15rem;color:#fff;}
+.drw-logo-t{font-size:.61rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;}
+.drw-user{padding:.75rem 1.2rem;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:9px;}
+.drw-av{width:31px;height:31px;border-radius:50%;background:#c07c2a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;}
+.drw-nm{font-size:.84rem;font-weight:500;color:#fff;}
+.drw-rl{font-size:.69rem;color:rgba(255,255,255,.45);}
+.drw-nav{flex:1;padding:.4rem 0;}
+.drw-sec{font-size:.59rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);padding:.7rem 1.2rem .25rem;font-weight:500;}
+.drw-item{display:flex;align-items:center;gap:8px;width:100%;padding:.62rem 1.2rem;background:none;border:none;text-align:left;color:rgba(255,255,255,.6);cursor:pointer;font-size:.87rem;transition:all .14s;}
+.drw-item:hover,.drw-item.on{color:#fff;background:rgba(255,255,255,.12);}
+.drw-ic{width:15px;text-align:center;font-size:12px;}
+.drw-badge{margin-left:auto;background:#c07c2a;color:#fff;font-size:.61rem;font-weight:700;padding:1px 6px;border-radius:9px;}
+.drw-foot{padding:.9rem 1.2rem;border-top:1px solid rgba(255,255,255,.08);}
+.drw-plan{font-size:.7rem;color:rgba(255,255,255,.45);margin-bottom:6px;line-height:1.5;}
+.drw-plan strong{color:rgba(255,255,255,.75);}
+.drw-lo{width:100%;padding:7px;background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;color:rgba(255,255,255,.65);cursor:pointer;font-size:.81rem;}
+.drw-lo:hover{color:#fff;border-color:rgba(255,255,255,.45);}
+/* Main */
+.main{padding:1.1rem;max-width:860px;margin:0 auto;}
+.pane{display:none;}.pane.on{display:block;}
+/* Page header */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin-bottom:1.1rem;}
+.ph-t{font-family:'Playfair Display',serif;font-size:1.4rem;color:#0d3b5e;line-height:1.2;}
+.ph-s{font-size:.81rem;color:#64748b;margin-top:2px;}
+/* Cards */
+.card{background:#fff;border-radius:10px;padding:1rem;box-shadow:0 1px 4px rgba(0,0,0,.07);margin-bottom:.85rem;}
+.ct{font-size:.93rem;font-weight:600;color:#1a2332;margin-bottom:.7rem;padding-bottom:.55rem;border-bottom:1px solid #f1f5f9;}
+.ctr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem;padding-bottom:.55rem;border-bottom:1px solid #f1f5f9;}
+/* Metrics */
+.mrow{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;margin-bottom:.85rem;}
+.met{background:#fff;border-radius:10px;padding:.85rem .95rem;box-shadow:0 1px 4px rgba(0,0,0,.07);}
+.met.dk{background:#0d3b5e;}
+.ml{font-size:.67rem;font-weight:500;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;}
+.met.dk .ml{color:rgba(255,255,255,.5);}
+.mv{font-family:'Playfair Display',serif;font-size:1.65rem;color:#0d3b5e;margin-top:2px;line-height:1;}
+.met.dk .mv{color:#fff;}
+.mh{font-size:.69rem;color:#94a3b8;margin-top:2px;}
+.met.dk .mh{color:rgba(255,255,255,.4);}
+/* Tables */
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table{width:100%;border-collapse:collapse;min-width:440px;}
+th{font-size:.67rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;padding:.5rem .7rem;border-bottom:1px solid #f1f5f9;text-align:left;background:#f8fafc;}
+td{padding:.65rem .7rem;border-bottom:1px solid #f8fafc;font-size:.83rem;}
+tr:last-child td{border-bottom:none;}
+.tdm{color:#94a3b8;}.tdb{font-weight:600;}
+/* Badges */
+.bdg{display:inline-block;padding:2px 7px;border-radius:4px;font-size:.69rem;font-weight:600;}
+.bp{background:#dcfce7;color:#166534;}.bpd{background:#fef3c7;color:#92400e;}.bf{background:#fee2e2;color:#991b1b;}.bi{background:#e8f0f7;color:#0d3b5e;}.bd{background:#f1f5f9;color:#64748b;}
+/* Stepper */
+.stepper{display:flex;align-items:center;margin-bottom:1.1rem;overflow-x:auto;padding-bottom:2px;}
+.stp{display:flex;align-items:center;flex:1;min-width:0;}
+.sd{width:25px;height:25px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.69rem;font-weight:700;border:2px solid #e2e8f0;color:#94a3b8;background:#fff;}
+.sd.on{background:#0d3b5e;border-color:#0d3b5e;color:#fff;}
+.sd.dn{background:#166534;border-color:#166534;color:#fff;}
+.sl{font-size:.69rem;color:#94a3b8;margin-left:4px;white-space:nowrap;}
+.sl.on{color:#0d3b5e;font-weight:600;}
+.sln{flex:1;height:2px;background:#e2e8f0;margin:0 4px;}
+.sln.dn{background:#166534;}
+/* Check picker */
+.cklist{display:flex;flex-direction:column;gap:6px;}
+.ck{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:8px;cursor:pointer;background:#fff;}
+.ck.on{border-color:#0d3b5e;background:#e8f0f7;}
+.ck.lk{cursor:default;}
+.ckl{display:flex;align-items:center;gap:7px;}
+.ckic{font-size:13px;width:20px;text-align:center;}
+.ckt{font-size:.83rem;font-weight:500;}
+.cks{font-size:.69rem;color:#94a3b8;}
+.ckr{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.ckpr{font-size:.79rem;font-weight:600;color:#0d3b5e;}
+.ckbox{width:15px;height:15px;border-radius:3px;border:1.5px solid #cbd5e1;display:flex;align-items:center;justify-content:center;}
+.ck.on .ckbox{background:#0d3b5e;border-color:#0d3b5e;}
+.ck.on .ckbox::after{content:'✓';font-size:8px;color:#fff;}
+/* Upload */
+.upz{border:1.5px dashed #cbd5e1;border-radius:8px;padding:.9rem;text-align:center;cursor:pointer;margin-bottom:6px;background:#fff;}
+.upz.dn{border-style:solid;border-color:#166534;background:#f0fdf4;}
+.upzic{font-size:1.1rem;margin-bottom:3px;}
+.upzt{font-size:.83rem;font-weight:500;}
+.upzs{font-size:.69rem;color:#94a3b8;margin-top:1px;}
+/* Afford */
+.arow{display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem;margin:.7rem 0;}
+.abox{background:#f8fafc;border-radius:8px;padding:.6rem .75rem;}
+.al{font-size:.64rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;}
+.av{font-size:1.05rem;font-weight:700;margin-top:2px;}
+.av.g{color:#166534;}.av.w{color:#92400e;}.av.r{color:#991b1b;}
+.srow{display:flex;align-items:center;gap:.9rem;padding:.8rem;background:#f8fafc;border-radius:8px;}
+.sring{position:relative;width:60px;height:60px;flex-shrink:0;}
+.sring svg{position:absolute;top:0;left:0;transform:rotate(-90deg);}
+.snum{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:#0d3b5e;}
+.slbl{font-size:.88rem;font-weight:600;color:#1a2332;}
+.ssub{font-size:.76rem;color:#64748b;margin-top:2px;}
+.flg{display:flex;align-items:center;gap:6px;padding:5px 7px;border-radius:5px;font-size:.78rem;font-weight:500;margin-bottom:3px;}
+.flg.p{background:#dcfce7;color:#166534;}.flg.f{background:#fee2e2;color:#991b1b;}
+.fd{width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;flex-shrink:0;}
+.flg.p .fd{background:#166534;}.flg.f .fd{background:#991b1b;}
+/* Consent */
+.coni{display:flex;align-items:flex-start;gap:7px;font-size:.81rem;margin-bottom:.55rem;cursor:pointer;line-height:1.5;}
+.coni input{margin-top:2px;width:14px;height:14px;flex-shrink:0;accent-color:#0d3b5e;}
+/* Note */
+.note{font-size:.76rem;color:#475569;line-height:1.65;padding:.7rem .85rem;background:#e8f0f7;border-left:3px solid #0d3b5e;border-radius:0 8px 8px 0;margin-top:.7rem;}
+.note strong{color:#0d3b5e;}
+/* Modal */
+.mwrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:flex-end;justify-content:center;padding:0;}
+.mwrap.on{display:flex;}
+.mbox{background:#fff;border-radius:16px 16px 0 0;padding:1.4rem;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;}
+.mhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.mt{font-family:'Playfair Display',serif;font-size:1.15rem;color:#0d3b5e;}
+.mx{background:none;border:none;font-size:1.15rem;cursor:pointer;color:#94a3b8;padding:2px 6px;}
+.obox{background:#e8f0f7;border-radius:8px;padding:.8rem;margin-bottom:.9rem;}
+.ol{display:flex;justify-content:space-between;font-size:.81rem;color:#475569;padding:2px 0;}
+.ol.ot{border-top:1px solid #cbd5e1;margin-top:5px;padding-top:7px;font-weight:700;color:#1a2332;}
+.c2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;}
+.sec-txt{text-align:center;font-size:.7rem;color:#94a3b8;margin-top:.55rem;}
+/* Result */
+.rbanner{display:flex;align-items:center;gap:.85rem;padding:.9rem 1rem;border-radius:10px;margin-bottom:.85rem;}
+.rp{background:#dcfce7;border:1px solid #86efac;}.rw{background:#fef3c7;border:1px solid #fde68a;}
+.ric{font-size:1.65rem;flex-shrink:0;}
+.rt{font-size:.93rem;font-weight:700;color:#1a2332;}
+.rs{font-size:.76rem;color:#64748b;margin-top:1px;}
+.rsn{margin-left:auto;text-align:center;}
+.rsnn{font-family:'Playfair Display',serif;font-size:1.65rem;font-weight:700;color:#0d3b5e;line-height:1;}
+.rsnl{font-size:.64rem;color:#64748b;}
+/* Det rows */
+.dr{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:.83rem;}
+.dr:last-child{border-bottom:none;}
+.drl{color:#64748b;}
+/* Billing */
+.pgrid{display:grid;grid-template-columns:1fr;gap:.7rem;margin-bottom:.85rem;}
+.pcard{border:1.5px solid #e2e8f0;border-radius:10px;padding:.9rem;background:#fff;}
+.pcard.curr{border-color:#0d3b5e;background:#e8f0f7;}
+.pctag{font-size:.61rem;font-weight:700;color:#0d3b5e;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;}
+.pname{font-size:.93rem;font-weight:700;color:#1a2332;}
+.pprice{font-family:'Playfair Display',serif;font-size:1.45rem;color:#0d3b5e;margin:3px 0;}
+.pprice span{font-size:.73rem;color:#94a3b8;font-family:'DM Sans',sans-serif;}
+.pchecks{font-size:.73rem;color:#64748b;margin-bottom:.65rem;}
+.pfeat{font-size:.76rem;color:#475569;padding:2px 0;}
+.pgitem{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;}
+.pgitem:last-child{border-bottom:none;}
+.pginame{font-size:.83rem;font-weight:500;}
+.pgidesc{font-size:.7rem;color:#94a3b8;}
+.pgir{display:flex;align-items:center;gap:7px;flex-shrink:0;}
+.pgipr{font-size:.83rem;font-weight:700;color:#0d3b5e;}
+/* Doc grid */
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-bottom:.9rem;}
+.dopt{border:1.5px solid #e2e8f0;border-radius:8px;padding:.7rem .45rem;text-align:center;cursor:pointer;background:#fff;}
+.dopt.on{border-color:#0d3b5e;border-width:2px;background:#e8f0f7;}
+.doic{font-size:1.2rem;margin-bottom:3px;}
+.dol{font-size:.76rem;font-weight:600;}
+.dos{font-size:.65rem;color:#94a3b8;}
+/* Toast */
+#toasts{position:fixed;bottom:.85rem;left:.85rem;right:.85rem;z-index:9999;pointer-events:none;}
+.toast{padding:.7rem .95rem;border-radius:8px;font-size:.83rem;font-weight:600;margin-bottom:.4rem;box-shadow:0 2px 10px rgba(0,0,0,.13);}
+.ti{background:#1a2332;color:#fff;}.ts{background:#166534;color:#fff;}.te{background:#991b1b;color:#fff;}
+/* Spinner */
+.spin{display:inline-block;width:15px;height:15px;border-radius:50%;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;animation:sp .65s linear infinite;vertical-align:middle;}
+@keyframes sp{to{transform:rotate(360deg);}}
+/* Misc */
+.mt1{margin-top:.45rem;}.mt2{margin-top:.9rem;}.mt3{margin-top:1.4rem;}
+.mb1{margin-bottom:.45rem;}.mb2{margin-bottom:.9rem;}
+.sm{font-size:.81rem;color:#64748b;}
+.tc{text-align:center;}
+.fr{display:flex;align-items:center;gap:.55rem;flex-wrap:wrap;}
+.twoc{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;}
+.empty{text-align:center;padding:2rem 1rem;color:#94a3b8;}
+.empty-ic{font-size:2rem;margin-bottom:.5rem;}
+.empty h3{font-size:.92rem;font-weight:600;color:#475569;margin-bottom:.25rem;}
+.secl{font-size:.65rem;text-transform:uppercase;letter-spacing:.09em;color:#94a3b8;font-weight:600;margin:.85rem 0 .45rem;}
+@media(max-width:480px){.mrow{grid-template-columns:1fr 1fr;}.twoc{grid-template-columns:1fr;}.arow{grid-template-columns:1fr 1fr;}.f2{grid-template-columns:1fr;}.pgrid{grid-template-columns:1fr;}.dgrid{grid-template-columns:1fr 1fr;}.stp .sl{display:none;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="pg on" id="pg-login">
+  <div class="lp-top">
+    <div class="lp-logo">TenantPass</div>
+    <div class="lp-tag">UK Tenant Vetting Platform</div>
+  </div>
+  <div class="lp-body">
+    <div class="lp-card">
+      <h2>Sign in</h2>
+      <p>Access your TenantPass account.</p>
+      <div class="hint">
+        <strong>Business:</strong> admin@premierlettings.co.uk<br>
+        <strong>Tenant:</strong> dan.fletcher@gmail.com<br>
+        Password (both): <strong>demo1234</strong>
+      </div>
+      <div class="fld"><label>Email address</label><input type="email" id="li-em" value="admin@premierlettings.co.uk" autocomplete="email"></div>
+      <div class="fld"><label>Password</label><input type="password" id="li-pw" value="demo1234" autocomplete="current-password"><div class="ferr" id="li-err"></div></div>
+      <button class="btn btn-nv" id="li-btn" onclick="doLogin()">Sign in</button>
+      <div class="or">or</div>
+      <button class="btn btn-ol" onclick="goPage('pg-register')">Create an account</button>
+      <div class="sw mt2">No account? <button class="lnk" onclick="goPage('pg-register')">Register free</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div class="pg" id="pg-register">
+  <div class="lp-top"><div class="lp-logo">TenantPass</div><div class="lp-tag">Create your account</div></div>
+  <div class="lp-body">
+    <div class="lp-card">
+      <h2>Create account</h2>
+      <p>Join TenantPass in under a minute.</p>
+      <div class="ttabs">
+        <div class="ttab on" id="rt-biz" onclick="setRT('business')"><span class="ttab-ic">🏢</span><div class="ttab-l">Business</div><div class="ttab-s">Landlord / agent</div></div>
+        <div class="ttab" id="rt-ten" onclick="setRT('tenant')"><span class="ttab-ic">🏠</span><div class="ttab-l">Tenant</div><div class="ttab-s">Rental applicant</div></div>
+      </div>
+      <div class="f2 mb1">
+        <div class="fld"><label>First name <span class="req">*</span></label><input type="text" id="r-fn" placeholder="Jane"></div>
+        <div class="fld"><label>Last name <span class="req">*</span></label><input type="text" id="r-ln" placeholder="Smith"></div>
+      </div>
+      <div class="fld" id="r-co-row"><label>Company name <span class="req">*</span></label><input type="text" id="r-co" placeholder="Smith Lettings Ltd"></div>
+      <div class="fld"><label>Email <span class="req">*</span></label><input type="email" id="r-em" placeholder="you@example.com"></div>
+      <div class="f2 mb1">
+        <div class="fld"><label>Password <span class="req">*</span></label><input type="password" id="r-pw" placeholder="8+ characters"></div>
+        <div class="fld"><label>Confirm</label><input type="password" id="r-pw2" placeholder="repeat"></div>
+      </div>
+      <div class="ferr mb1" id="r-err"></div>
+      <button class="btn btn-nv" id="r-btn" onclick="doReg()">Create account</button>
+      <div class="sw mt2">Already registered? <button class="lnk" onclick="goPage('pg-login')">Sign in</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- BUSINESS SHELL -->
+<div class="shell" id="pg-biz">
+  <div class="tnav">
+    <button class="tnav-menu" onclick="openD('d-biz')">&#9776;</button>
+    <div class="tnav-logo">TenantPass</div>
+    <div class="tnav-av" id="biz-tav">PL</div>
+  </div>
+  <div class="dov" id="d-biz-ov" onclick="closeD()"></div>
+  <div class="drw" id="d-biz">
+    <div class="drw-logo"><div class="drw-logo-n">TenantPass</div><div class="drw-logo-t">Business portal</div></div>
+    <div class="drw-user"><div class="drw-av" id="d-biz-av">PL</div><div><div class="drw-nm" id="d-biz-nm">Premier Lettings</div><div class="drw-rl">Business account</div></div></div>
+    <nav class="drw-nav">
+      <div class="drw-sec">Overview</div>
+      <button class="drw-item on" data-p="bp-ov" onclick="bNav(this)"><span class="drw-ic">📊</span>Dashboard</button>
+      <div class="drw-sec">Vetting</div>
+      <button class="drw-item" data-p="bp-new" onclick="bNav(this)"><span class="drw-ic">➕</span>New application</button>
+      <button class="drw-item" data-p="bp-apps" onclick="bNav(this)"><span class="drw-ic">📋</span>Applications<span class="drw-badge" id="d-bdg">3</span></button>
+      <div class="drw-sec">Billing</div>
+      <button class="drw-item" data-p="bp-billing" onclick="bNav(this)"><span class="drw-ic">💳</span>Plans &amp; billing</button>
+      <button class="drw-item" data-p="bp-pays" onclick="bNav(this)"><span class="drw-ic">🧾</span>Payments</button>
+      <div class="drw-sec">Account</div>
+      <button class="drw-item" data-p="bp-settings" onclick="bNav(this)"><span class="drw-ic">⚙️</span>Settings</button>
+    </nav>
+    <div class="drw-foot">
+      <div class="drw-plan">Plan: <strong id="d-plan">Pro</strong> · <strong id="d-cred">42</strong> credits</div>
+      <button class="drw-lo" onclick="doLogout()">Sign out</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="pane on" id="bp-ov">
+      <div class="ph"><div><div class="ph-t">Dashboard</div><div class="ph-s">Activity at a glance.</div></div><button class="btn btn-nv btn-sm" onclick="goBP('bp-new')">+ New application</button></div>
+      <div class="mrow">
+        <div class="met dk"><div class="ml">Credits</div><div class="mv" id="ov-cred">42</div><div class="mh">remaining</div></div>
+        <div class="met"><div class="ml">Applications</div><div class="mv" id="ov-apps">3</div></div>
+        <div class="met"><div class="ml">Pass rate</div><div class="mv">87%</div></div>
+      </div>
+      <div class="card"><div class="ctr"><div class="ct" style="border:none;margin:0;padding:0">Recent applications</div><button class="btn btn-sm btn-ol" onclick="goBP('bp-apps')">View all</button></div><div class="tscroll" id="ov-tbl"></div></div>
+    </div>
+    <div class="pane" id="bp-apps">
+      <div class="ph"><div><div class="ph-t">Applications</div></div><button class="btn btn-nv btn-sm" onclick="goBP('bp-new')">+ New</button></div>
+      <div class="card"><div class="tscroll" id="all-tbl"></div></div>
+    </div>
+    <div class="pane" id="bp-new">
+      <div class="ph"><div class="ph-t">New application</div></div>
+      <div id="wiz"></div>
+    </div>
+    <div class="pane" id="bp-billing"><div class="ph"><div class="ph-t">Plans &amp; billing</div></div><div id="br"></div></div>
+    <div class="pane" id="bp-pays"><div class="ph"><div class="ph-t">Payment history</div></div><div class="card"><div class="tscroll" id="pay-tbl"></div></div></div>
+    <div class="pane" id="bp-settings">
+      <div class="ph"><div class="ph-t">Settings</div></div>
+      <div class="card">
+        <div class="ct">Business profile</div>
+        <div class="fld"><label>Company name</label><input type="text" id="s-co"></div>
+        <div class="fld"><label>Email</label><input type="email" id="s-em"></div>
+        <div class="mt2"><button class="btn btn-nv btn-sm" onclick="toast('Saved.','success')">Save changes</button></div>
+      </div>
+      <div class="card mt1"><div class="ct">Data &amp; compliance</div><p class="sm">Data retained for tenancy + 12 months then auto-deleted per ICO guidance.</p><div class="fr mt2"><button class="btn btn-sm btn-ol" onclick="toast('Export requested.','info')">Export data</button><button class="btn btn-sm btn-ol" onclick="toast('Deletion request submitted.','info')">Delete data</button></div><div class="note mt2">DPO: <strong>dpo@tenantpass.co.uk</strong> · ICO: ZB654321</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TENANT SHELL -->
+<div class="shell" id="pg-ten">
+  <div class="tnav">
+    <button class="tnav-menu" onclick="openD('d-ten')">&#9776;</button>
+    <div class="tnav-logo">TenantPass</div>
+    <div class="tnav-av" id="ten-tav">DF</div>
+  </div>
+  <div class="dov" id="d-ten-ov" onclick="closeD()"></div>
+  <div class="drw" id="d-ten">
+    <div class="drw-logo"><div class="drw-logo-n">TenantPass</div><div class="drw-logo-t">Tenant portal</div></div>
+    <div class="drw-user"><div class="drw-av" id="d-ten-av">DF</div><div><div class="drw-nm" id="d-ten-nm">Daniel Fletcher</div><div class="drw-rl">Tenant account</div></div></div>
+    <nav class="drw-nav">
+      <div class="drw-sec">My application</div>
+      <button class="drw-item on" data-p="tp-status" onclick="tNav(this)"><span class="drw-ic">🏠</span>Application status</button>
+      <button class="drw-item" data-p="tp-docs" onclick="tNav(this)"><span class="drw-ic">📄</span>My documents</button>
+      <div class="drw-sec">Privacy</div>
+      <button class="drw-item" data-p="tp-rights" onclick="tNav(this)"><span class="drw-ic">⚖️</span>My GDPR rights</button>
+    </nav>
+    <div class="drw-foot"><button class="drw-lo" onclick="doLogout()">Sign out</button></div>
+  </div>
+  <div class="main">
+    <div class="pane on" id="tp-status"><div class="ph"><div class="ph-t">My application</div></div><div id="ten-sr"></div></div>
+    <div class="pane" id="tp-docs"><div class="ph"><div class="ph-t">My documents</div></div><div class="card"><div class="ct">Submitted documents</div><div id="ten-dl"></div><div class="note mt2">Encrypted at rest. Auto-deleted 12 months after tenancy ends.</div></div></div>
+    <div class="pane" id="tp-rights">
+      <div class="ph"><div class="ph-t">My GDPR rights</div></div>
+      <div class="card">
+        <div class="ct">Your rights under UK GDPR</div>
+        <div class="card mb1"><b style="font-size:.86rem">Right of access — Article 15</b><p class="sm mt1">Request all data we hold. We respond within 30 days.</p><button class="btn btn-sm btn-ol mt1" onclick="toast('Access request submitted.','success')">Request my data</button></div>
+        <div class="card mb1"><b style="font-size:.86rem">Right to erasure — Article 17</b><p class="sm mt1">Request deletion once there's no legitimate purpose for retention.</p><button class="btn btn-sm btn-ol mt1" onclick="toast('Erasure request submitted.','info')">Request deletion</button></div>
+        <div class="card"><b style="font-size:.86rem">Right to rectification — Article 16</b><p class="sm mt1">Request correction of any inaccurate information.</p><button class="btn btn-sm btn-ol mt1" onclick="toast('Email dpo@tenantpass.co.uk','info')">Request correction</button></div>
+        <div class="note mt2">Legal basis: <strong>Art 6(1)(f)</strong> · DPO: <strong>dpo@tenantpass.co.uk</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="mwrap" id="pay-modal" onclick="closeMod(event)">
+  <div class="mbox" onclick="event.stopPropagation()">
+    <div class="mhd"><div class="mt" id="pm-t">Complete payment</div><button class="mx" onclick="closeMod()">✕</button></div>
+    <div class="obox" id="pm-o"></div>
+    <div class="secl">Card details</div>
+    <div class="fld"><label>Card number</label><input type="tel" id="pm-n" placeholder="4242 4242 4242 4242" maxlength="19" oninput="fmtCard(this)" autocomplete="cc-number"></div>
+    <div class="c2"><div class="fld"><label>Expiry (MM/YY)</label><input type="tel" id="pm-e" placeholder="12/27" maxlength="5" oninput="fmtExp(this)" autocomplete="cc-exp"></div><div class="fld"><label>CVC</label><input type="tel" id="pm-c" placeholder="123" maxlength="4" autocomplete="cc-csc"></div></div>
+    <div class="fld"><label>Name on card</label><input type="text" id="pm-nm" placeholder="Jane Smith" autocomplete="cc-name"></div>
+    <div class="ferr mb1" id="pm-err"></div>
+    <button class="btn btn-gd" id="pm-btn" onclick="submitPay()">Pay now</button>
+    <div class="sec-txt mt1">🔒 Secure · Test: 4242 4242 4242 4242</div>
+  </div>
+</div>
+<div id="toasts"></div>
+
+<script>
+/* DATA */
+var USERS=[
+  {id:'u_b1',type:'business',email:'admin@premierlettings.co.uk',password:'demo1234',name:'Premier Lettings Ltd',contactName:'James Hartley',plan:'pro',credits:42},
+  {id:'u_b2',type:'business',email:'hello@keystonemidlands.co.uk',password:'demo1234',name:'Keystone Midlands',contactName:'Priya Sharma',plan:'starter',credits:7},
+  {id:'u_t1',type:'tenant',email:'dan.fletcher@gmail.com',password:'demo1234',name:'Daniel Fletcher'},
+  {id:'u_t2',type:'tenant',email:'amara.osei@outlook.com',password:'demo1234',name:'Amara Osei'}
+];
+var APPS=[
+  {id:'a1',bizId:'u_b1',tenantId:'u_t1',tenantName:'Daniel Fletcher',property:'14 Cavendish Road, Nottingham, NG7 1BB',rent:1150,status:'complete',score:81,created:'28 Oct 2025',cr:{rtr:'pass',credit:'pass',affordability:'pass',landlordref:'pass',ccj:'pass'}},
+  {id:'a2',bizId:'u_b1',tenantId:'u_t2',tenantName:'Amara Osei',property:'7 Fletcher Gate, Nottingham, NG1 2FZ',rent:975,status:'in_progress',score:null,created:'05 Nov 2025',cr:{rtr:'pass',credit:'pending',affordability:'pending'}},
+  {id:'a3',bizId:'u_b1',tenantId:null,tenantName:'M. Brown (invited)',property:'23 Lenton Boulevard, Nottingham, NG7 2AN',rent:850,status:'invited',score:null,created:'10 Nov 2025',cr:{}}
+];
+var DOCS=[
+  {tid:'u_t1',label:'Passport — front',status:'verified',date:'28 Oct 2025'},
+  {tid:'u_t1',label:'Passport — back',status:'verified',date:'28 Oct 2025'},
+  {tid:'u_t1',label:'Selfie / liveness',status:'verified',date:'28 Oct 2025'}
+];
+var PAYS=[
+  {bid:'u_b1',desc:'Vetting — app_001',amount:1450,date:'28 Oct 2025',last4:'4242'},
+  {bid:'u_b1',desc:'Vetting — app_002',amount:1050,date:'05 Nov 2025',last4:'4242'},
+  {bid:'u_b1',desc:'Pro subscription',amount:7900,date:'01 Jun 2024',last4:'4242'}
+];
+var PLANS={
+  starter:{id:'starter',name:'Starter',price:2900,credits:10,features:['10 checks/month','Credit & RTR','Email support']},
+  pro:{id:'pro',name:'Pro',price:7900,credits:50,features:['50 checks/month','All check types','Priority support']},
+  unlimited:{id:'unlimited',name:'Unlimited',price:14900,credits:999,features:['Unlimited checks','White-label','API access']}
+};
+var CHECKS={
+  rtr:{name:'Right to Rent',price:0,req:true,icon:'🪪',desc:'Mandatory — Immigration Act 2014'},
+  credit:{name:'Credit reference',price:650,req:false,icon:'📊',desc:'Equifax soft search'},
+  affordability:{name:'Affordability',price:400,req:false,icon:'💷',desc:'Income vs rent ratio'},
+  landlordref:{name:'Landlord reference',price:0,req:false,icon:'🏡',desc:'Automated reference'},
+  ccj:{name:'CCJ & insolvency',price:350,req:false,icon:'⚖️',desc:'Court records'},
+  employment:{name:'Employment',price:250,req:false,icon:'💼',desc:'Employer confirmation'},
+  eviction:{name:'Eviction history',price:500,req:false,icon:'🔎',desc:'NRLA database'}
+};
+
+/* STATE */
+var CU=null;
+
+/* HELPERS */
+function g(id){return document.getElementById(id);}
+function sv(id,v){var e=g(id);if(e)e.textContent=v;}
+function fmt(p){if(!p)return 'Free';return new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(p/100);}
+function ini(n){return (n||'?').split(' ').slice(0,2).map(function(w){return w[0]||'';}).join('').toUpperCase()||'?';}
+function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):'';}
+function cr(u){return (u&&u.credits!=null)?u.credits:0;}
+function fmtCard(el){var v=el.value.replace(/\D/g,'').slice(0,16);var m=v.match(/.{1,4}/g);el.value=m?m.join(' '):v;}
+function fmtExp(el){var v=el.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2,4);el.value=v;}
+function sbdg(s){
+  var m={complete:'bp',in_progress:'bpd',invited:'bi',draft:'bd',pass:'bp',fail:'bf',pending:'bpd',warn:'bpd'};
+  var l={complete:'✓ Complete',in_progress:'⧖ In progress',invited:'✉ Invited',draft:'Draft',pass:'✓ Pass',fail:'✗ Fail',pending:'⧖ Pending',warn:'⚠ Review'};
+  return '<span class="bdg '+(m[s]||'bd')+'">'+(l[s]||s)+'</span>';
+}
+
+/* TOAST */
+var _tt=null;
+function toast(msg,type){
+  clearTimeout(_tt);
+  var c=g('toasts');
+  if(c)c.innerHTML='<div class="toast '+(type==='success'?'ts':type==='error'?'te':'ti')+'">'+msg+'</div>';
+  _tt=setTimeout(function(){if(c)c.innerHTML='';},3500);
+}
+
+/* ROUTING */
+function goPage(id){
+  var all=document.querySelectorAll('.pg,.shell');
+  for(var i=0;i<all.length;i++)all[i].classList.remove('on');
+  var el=g(id);if(el)el.classList.add('on');
+  window.scrollTo(0,0);
+}
+
+/* DRAWER */
+function openD(id){
+  var d=g(id),o=g(id+'-ov');
+  if(d)d.classList.add('on');
+  if(o)o.classList.add('on');
+}
+function closeD(){
+  var ds=document.querySelectorAll('.drw');for(var i=0;i<ds.length;i++)ds[i].classList.remove('on');
+  var os=document.querySelectorAll('.dov');for(var i=0;i<os.length;i++)os[i].classList.remove('on');
+}
+
+/* AUTH */
+function doLogin(){
+  var em=g('li-em')?g('li-em').value.trim():'';
+  var pw=g('li-pw')?g('li-pw').value:'';
+  var err=g('li-err'),btn=g('li-btn');
+  if(err)err.style.display='none';
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spin"></span> Signing in\u2026';}
+  setTimeout(function(){
+    var u=null;
+    for(var i=0;i<USERS.length;i++){
+      if(USERS[i].email.toLowerCase()===em.toLowerCase()&&USERS[i].password===pw){u=USERS[i];break;}
+    }
+    if(btn){btn.disabled=false;btn.textContent='Sign in';}
+    if(!u){if(err){err.textContent='Incorrect email or password.';err.style.display='block';}return;}
+    CU={};for(var k in u){if(u.hasOwnProperty(k))CU[k]=u[k];}
+    if(u.type==='business')showBiz();else showTen();
+  },600);
+}
+
+var _rt='business';
+function setRT(t){
+  _rt=t;
+  var b=g('rt-biz'),n=g('rt-ten'),r=g('r-co-row');
+  if(b)b.classList[t==='business'?'add':'remove']('on');
+  if(n)n.classList[t==='tenant'?'add':'remove']('on');
+  if(r)r.style.display=t==='business'?'':'none';
+}
+function doReg(){
+  var fn=g('r-fn')?g('r-fn').value.trim():'',ln=g('r-ln')?g('r-ln').value.trim():'';
+  var co=g('r-co')?g('r-co').value.trim():'',em=g('r-em')?g('r-em').value.trim():'';
+  var pw=g('r-pw')?g('r-pw').value:'',pw2=g('r-pw2')?g('r-pw2').value:'';
+  var err=g('r-err'),btn=g('r-btn');
+  if(err)err.style.display='none';
+  if(!fn||!ln||!em||!pw){if(err){err.textContent='Please fill all required fields.';err.style.display='block';}return;}
+  if(pw!==pw2){if(err){err.textContent='Passwords do not match.';err.style.display='block';}return;}
+  if(pw.length<8){if(err){err.textContent='Password must be 8+ characters.';err.style.display='block';}return;}
+  for(var i=0;i<USERS.length;i++){if(USERS[i].email.toLowerCase()===em.toLowerCase()){if(err){err.textContent='Account already exists.';err.style.display='block';}return;}}
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spin"></span> Creating\u2026';}
+  setTimeout(function(){
+    var nu={id:'u_'+Date.now(),type:_rt,email:em,password:pw,name:fn+' '+ln,contactName:fn+' '+ln,company:co,plan:_rt==='business'?'starter':null,credits:_rt==='business'?3:0};
+    USERS.push(nu);
+    CU={};for(var k in nu){if(nu.hasOwnProperty(k))CU[k]=nu[k];}
+    if(btn){btn.disabled=false;btn.textContent='Create account';}
+    toast('Welcome to TenantPass!','success');
+    if(nu.type==='business')showBiz();else showTen();
+  },600);
+}
+function doLogout(){CU=null;closeD();goPage('pg-login');}
+
+/* BIZ */
+function showBiz(){
+  if(!CU)return;
+  sv('biz-tav',ini(CU.name));sv('d-biz-av',ini(CU.name));sv('d-biz-nm',CU.name);
+  sv('d-plan',cap(CU.plan||'starter'));sv('d-cred',cr(CU));sv('ov-cred',cr(CU));
+  var sc=g('s-co');if(sc)sc.value=CU.name||'';
+  var se=g('s-em');if(se)se.value=CU.email||'';
+  rPanes('#pg-biz .pane','bp-ov');
+  rDItems('#d-biz .drw-item','bp-ov');
+  rApps();rPayTbl();rBilling();
+  goPage('pg-biz');
+}
+function bNav(btn){
+  closeD();
+  var its=document.querySelectorAll('#d-biz .drw-item');
+  for(var i=0;i<its.length;i++)its[i].classList.remove('on');
+  btn.classList.add('on');
+  var p=btn.getAttribute('data-p');
+  rPanes('#pg-biz .pane',p);
+  if(p==='bp-new')initWiz();
+  if(p==='bp-pays')rPayTbl();
+  if(p==='bp-billing')rBilling();
+}
+function goBP(p){
+  rPanes('#pg-biz .pane',p);
+  rDItems('#d-biz .drw-item',p);
+  if(p==='bp-new')initWiz();
+}
+function rPanes(sel,aid){var es=document.querySelectorAll(sel);for(var i=0;i<es.length;i++)es[i].classList.remove('on');var t=g(aid);if(t)t.classList.add('on');}
+function rDItems(sel,pid){var its=document.querySelectorAll(sel);for(var i=0;i<its.length;i++){its[i].classList.remove('on');if(its[i].getAttribute('data-p')===pid)its[i].classList.add('on');}}
+function rApps(){
+  if(!CU)return;
+  var apps=[];for(var i=0;i<APPS.length;i++){if(APPS[i].bizId===CU.id)apps.push(APPS[i]);}
+  sv('ov-apps',apps.length);sv('d-bdg',apps.length);
+  rAppTbl('ov-tbl',apps.slice(0,5));rAppTbl('all-tbl',apps);
+}
+function rAppTbl(id,apps){
+  var el=g(id);if(!el)return;
+  if(!apps.length){el.innerHTML='<div class="empty"><div class="empty-ic">📋</div><h3>No applications yet</h3><p>Create your first vetting application.</p></div>';return;}
+  var rows='';
+  for(var i=0;i<apps.length;i++){var a=apps[i];rows+='<tr><td class="tdb">'+a.property+'</td><td class="tdm">'+a.tenantName+'</td><td>'+sbdg(a.status)+'</td><td>'+(a.score!=null?'<b>'+a.score+'</b><span class="tdm">/100</span>':'—')+'</td><td class="tdm">£'+a.rent+'</td><td class="tdm">'+a.created+'</td></tr>';}
+  el.innerHTML='<table><thead><tr><th>Property</th><th>Tenant</th><th>Status</th><th>Score</th><th>Rent</th><th>Date</th></tr></thead><tbody>'+rows+'</tbody></table>';
+}
+function rPayTbl(){
+  var el=g('pay-tbl');if(!el||!CU)return;
+  var pays=[];for(var i=0;i<PAYS.length;i++){if(PAYS[i].bid===CU.id)pays.push(PAYS[i]);}
+  if(!pays.length){el.innerHTML='<div class="empty"><div class="empty-ic">🧾</div><h3>No payments yet</h3></div>';return;}
+  var rows='';for(var i=0;i<pays.length;i++){var p=pays[i];rows+='<tr><td>'+p.date+'</td><td>'+p.desc+'</td><td class="tdb">'+fmt(p.amount)+'</td><td class="tdm">•••• '+p.last4+'</td></tr>';}
+  el.innerHTML='<table><thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Card</th></tr></thead><tbody>'+rows+'</tbody></table>';
+}
+function rBilling(){
+  var el=g('br');if(!el||!CU)return;
+  var pc='';var pks=['starter','pro','unlimited'];
+  for(var i=0;i<pks.length;i++){
+    var pk=pks[i],p=PLANS[pk],ic=CU.plan===pk;
+    var fs='';for(var j=0;j<p.features.length;j++)fs+='<div class="pfeat">✓ '+p.features[j]+'</div>';
+    pc+='<div class="pcard'+(ic?' curr':'')+'">'+
+      (ic?'<div class="pctag">Current plan</div>':'')+
+      '<div class="pname">'+p.name+'</div><div class="pprice">'+fmt(p.price)+'<span>/mo</span></div>'+
+      '<div class="pchecks">'+(p.credits>=999?'Unlimited':p.credits+' checks/month')+'</div>'+fs+
+      '<button class="btn btn-sm '+(ic?'btn-ol':'btn-nv')+' mt2" '+(ic?'disabled':'')+
+        ' onclick="openPM(\'plan\',\''+pk+'\',\''+p.name+'\','+p.price+')">'+(ic?'Active':'Upgrade')+'</button></div>';
+  }
+  var ci='';var cks=['credit','affordability','ccj','employment','eviction'];
+  for(var i=0;i<cks.length;i++){
+    var ck=cks[i],c=CHECKS[ck];
+    ci+='<div class="pgitem"><div><div class="pginame">'+c.icon+' '+c.name+'</div><div class="pgidesc">'+c.desc+'</div></div>'+
+      '<div class="pgir"><div class="pgipr">'+fmt(c.price)+'</div><button class="btn btn-sm btn-ol" onclick="openPM(\'check\',\''+ck+'\',\''+c.name+'\','+c.price+')">Buy</button></div></div>';
+  }
+  el.innerHTML='<div class="mrow"><div class="met dk"><div class="ml">Plan</div><div class="mv" style="font-size:1.3rem">'+cap(CU.plan||'starter')+'</div></div>'+
+    '<div class="met"><div class="ml">Credits</div><div class="mv">'+cr(CU)+'</div><div class="mh">1=1 check</div></div>'+
+    '<div class="met"><div class="ml">Billing</div><div class="mv" style="font-size:1.2rem">Monthly</div></div></div>'+
+    '<div class="card"><div class="ct">Plans</div><div class="pgrid">'+pc+'</div></div>'+
+    '<div class="card"><div class="ct">Pay-as-you-go</div>'+ci+'</div>';
+}
+
+/* TENANT */
+function showTen(){
+  if(!CU)return;
+  sv('ten-tav',ini(CU.name));sv('d-ten-av',ini(CU.name));sv('d-ten-nm',CU.name);
+  rPanes('#pg-ten .pane','tp-status');rDItems('#d-ten .drw-item','tp-status');
+  rTenStatus();rTenDocs();goPage('pg-ten');
+}
+function tNav(btn){
+  closeD();var its=document.querySelectorAll('#d-ten .drw-item');
+  for(var i=0;i<its.length;i++)its[i].classList.remove('on');
+  btn.classList.add('on');rPanes('#pg-ten .pane',btn.getAttribute('data-p'));
+}
+function rTenStatus(){
+  var el=g('ten-sr');if(!el||!CU)return;
+  var app=null;for(var i=0;i<APPS.length;i++){if(APPS[i].tenantId===CU.id){app=APPS[i];break;}}
+  if(!app){el.innerHTML='<div class="empty"><div class="empty-ic">🏠</div><h3>No active application</h3><p>Your landlord will invite you to begin vetting.</p></div>';return;}
+  var passed=0,total=0,names={rtr:'Right to Rent',credit:'Credit',affordability:'Affordability',landlordref:'Landlord ref',ccj:'CCJ search'};
+  var rows='';
+  for(var k in app.cr){if(app.cr.hasOwnProperty(k)){total++;if(app.cr[k]==='pass')passed++;rows+='<div class="dr"><span class="drl">'+(names[k]||k)+'</span>'+sbdg(app.cr[k])+'</div>';}}
+  var isP=app.score>=70;
+  el.innerHTML='<div class="rbanner '+(isP?'rp':'rw')+'"><div class="ric">'+(isP?'✅':'⏳')+'</div><div><div class="rt">'+(isP?'Application passed':'In progress')+'</div><div class="rs">'+app.property+'</div><div class="rs">'+passed+'/'+total+' checks done</div></div>'+(app.score!=null?'<div class="rsn"><div class="rsnn">'+app.score+'</div><div class="rsnl">score</div></div>':'')+'</div>'+
+    '<div class="card"><div class="ct">Check results</div>'+rows+'<div class="note mt2">Data under <strong>UK GDPR Art. 6(1)(f)</strong>. See My GDPR rights to access or delete your data.</div></div>';
+}
+function rTenDocs(){
+  var el=g('ten-dl');if(!el||!CU)return;
+  var docs=[];for(var i=0;i<DOCS.length;i++){if(DOCS[i].tid===CU.id)docs.push(DOCS[i]);}
+  if(!docs.length){el.innerHTML='<div class="empty"><div class="empty-ic">📄</div><h3>No documents yet</h3></div>';return;}
+  var rows='';for(var i=0;i<docs.length;i++){var d=docs[i];rows+='<div class="dr"><div><div style="font-size:.83rem;font-weight:500">'+d.label+'</div><div class="sm">Uploaded '+d.date+'</div></div><span class="bdg '+(d.status==='verified'?'bp':'bpd')+'">'+d.status+'</span></div>';}
+  el.innerHTML=rows;
+}
+
+/* WIZARD */
+var WZ={step:0,checks:['rtr','credit','affordability','landlordref'],uploads:{},data:{rent:1200},fin:{income:32000,outgoings:750,debt:0,emp:'Employed full-time'},score:0};
+var WS=['Applicant details','Checks & consent','ID verification','Financial health','Payment','Decision'];
+function initWiz(){WZ.step=0;WZ.checks=['rtr','credit','affordability','landlordref'];WZ.uploads={};WZ.data={rent:1200};WZ.fin={income:32000,outgoings:750,debt:0,emp:'Employed full-time'};WZ.score=0;renderWiz();}
+function renderWiz(){
+  var el=g('wiz');if(!el)return;
+  var s='';for(var i=0;i<WS.length;i++){s+='<div class="stp"><div class="sd'+(i<WZ.step?' dn':i===WZ.step?' on':'')+'>'+(i<WZ.step?'✓':i+1)+'</div><div class="sl'+(i===WZ.step?' on':'')+'">'+WS[i]+'</div></div>'+(i<WS.length-1?'<div class="sln'+(i<WZ.step?' dn':'')+'"></div>':'');}
+  var nav=WZ.step<5?'<div class="fr mt2" style="justify-content:space-between">'+(WZ.step>0?'<button class="btn btn-sm btn-ol" onclick="WZ.step--;renderWiz()">← Back</button>':'<div></div>')+'<button class="btn btn-nv btn-sm" onclick="wizNext()">'+(WZ.step===4?'Pay &amp; submit':'Continue →')+'</button></div>':'';
+  var bodies=[ws0,ws1,ws2,ws3,ws4,ws5];
+  el.innerHTML='<div class="stepper">'+s+'</div><div class="card">'+bodies[WZ.step]()+'</div>'+nav;
+  if(WZ.step===3)calcA();
+}
+function ws0(){return '<div class="ct">Applicant details</div>'+
+  '<div class="f2"><div class="fld"><label>First name</label><input type="text" id="w-fn" value="'+(WZ.data.fn||'')+'" oninput="WZ.data.fn=this.value" placeholder="Sarah"></div>'+
+  '<div class="fld"><label>Last name</label><input type="text" id="w-ln" value="'+(WZ.data.ln||'')+'" oninput="WZ.data.ln=this.value" placeholder="Johnson"></div></div>'+
+  '<div class="fld"><label>Email</label><input type="email" id="w-em" value="'+(WZ.data.em||'')+'" oninput="WZ.data.em=this.value" placeholder="sarah@email.com"></div>'+
+  '<div class="fld"><label>Phone</label><input type="tel" id="w-ph" value="'+(WZ.data.ph||'')+'" oninput="WZ.data.ph=this.value" placeholder="07700 900000"></div>'+
+  '<div class="fld"><label>Property address</label><input type="text" id="w-prop" value="'+(WZ.data.prop||'')+'" oninput="WZ.data.prop=this.value" placeholder="14 High Street, Nottingham"></div>'+
+  '<div class="f2"><div class="fld"><label>Monthly rent (£)</label><input type="number" id="w-rent" value="'+(WZ.data.rent||1200)+'" oninput="WZ.data.rent=+this.value"></div>'+
+  '<div class="fld"><label>Tenancy type</label><select id="w-tt" onchange="WZ.data.ttype=this.value"><option>AST</option><option>HMO room</option><option>Company let</option></select></div></div>';}
+function ws1(){
+  var cks=['rtr','credit','affordability','landlordref','ccj','employment','eviction'],rows='';
+  for(var i=0;i<cks.length;i++){var k=cks[i],c=CHECKS[k],on=WZ.checks.indexOf(k)>-1;
+    rows+='<div class="ck'+(on?' on':'')+(c.req?' lk':'')+'" onclick="'+(c.req?'':'tCk(\''+k+'\',this)')+'">'+'<div class="ckl"><div class="ckic">'+c.icon+'</div><div><div class="ckt">'+c.name+'</div><div class="cks">'+c.desc+'</div></div></div>'+'<div class="ckr"><span class="ckpr">'+(c.req?'Required':fmt(c.price))+'</span><div class="ckbox"></div></div></div>';}
+  return '<div class="ct">Select checks</div><div class="cklist">'+rows+'</div>'+
+    '<div class="secl">Consent required</div>'+
+    '<div class="note">Under <strong>UK GDPR Art. 6(1)(f)</strong> inform the applicant their data will be processed. Under the <strong>Equality Act 2010</strong> checks must be applied equally.</div>'+
+    '<div class="mt2"><label class="coni"><input type="checkbox" id="con1"> Applicant informed of data processing and GDPR rights.</label>'+
+    '<label class="coni"><input type="checkbox" id="con2"> Applicant consents to soft credit search (no score impact).</label>'+
+    '<label class="coni"><input type="checkbox" id="con3"> Checks applied equally to all applicants (Equality Act 2010).</label>'+
+    '<label class="coni"><input type="checkbox" id="con4"> Privacy Notice provided to applicant.</label></div>';}
+function ws2(){
+  var docs=[{id:'pp',ic:'🛂',l:'UK/Irish passport',s:'List A'},{id:'brp',ic:'💳',l:'Biometric permit',s:'List A'},{id:'bc',ic:'📄',l:'Birth cert + NI',s:'List A'},{id:'eu',ic:'🇪🇺',l:'EU settled status',s:'List A'},{id:'vz',ic:'🌍',l:'Passport + visa',s:'List B'},{id:'sc',ic:'🏛️',l:'Share code',s:'List B'}];
+  var dg='';for(var i=0;i<docs.length;i++){var d=docs[i];dg+='<div class="dopt'+(WZ.data.docType===d.id?' on':'')+'" onclick="WZ.data.docType=\''+d.id+'\';renderWiz()"><div class="doic">'+d.ic+'</div><div class="dol">'+d.l+'</div><div class="dos">'+d.s+'</div></div>';}
+  var uzs=['Document front','Document back','Selfie / liveness'],up='';
+  for(var i=0;i<uzs.length;i++){var l=uzs[i],k='u'+i,done=WZ.uploads[k];up+='<div class="upz'+(done?' dn':'')+'" onclick="mUpload(\''+k+'\',\''+l+'\',this)"><div class="upzic">'+(done?'✅':'⬆️')+'</div><div class="upzt">'+(done?l+' — uploaded':l)+'</div><div class="upzs">'+(done?'Click to replace':'PNG, JPG or PDF · max 10MB')+'</div></div>';}
+  return '<div class="ct">ID verification — Right to Rent</div><div class="dgrid">'+dg+'</div><div class="secl">Upload documents</div>'+up+'<div class="note mt2">Verify in person or via certified IDSP. Retain for tenancy + <strong>12 months</strong>.</div>';}
+function ws3(){
+  var opts=['Employed full-time','Employed part-time','Self-employed','Retired / pension','Benefits / Universal Credit','Student'],sel='';
+  for(var i=0;i<opts.length;i++)sel+='<option'+(WZ.fin.emp===opts[i]?' selected':'')+'>'+opts[i]+'</option>';
+  return '<div class="ct">Financial health check</div>'+
+    '<div class="fld"><label>Employment</label><select id="w-emp" onchange="WZ.fin.emp=this.value;calcA()">'+sel+'</select></div>'+
+    '<div class="f2"><div class="fld"><label>Annual gross income (£)</label><input type="number" id="w-inc" value="'+WZ.fin.income+'" oninput="WZ.fin.income=+this.value;calcA()"></div>'+
+    '<div class="fld"><label>Monthly outgoings (£)</label><input type="number" id="w-out" value="'+WZ.fin.outgoings+'" oninput="WZ.fin.outgoings=+this.value;calcA()"></div></div>'+
+    '<div class="fld"><label>Existing debt (£)</label><input type="number" id="w-debt" value="'+WZ.fin.debt+'" oninput="WZ.fin.debt=+this.value;calcA()"></div>'+
+    '<div class="secl">Affordability</div>'+
+    '<div class="arow"><div class="abox"><div class="al">Net monthly</div><div class="av g" id="af-n">—</div></div><div class="abox"><div class="al">Rent/income</div><div class="av" id="af-r">—</div></div><div class="abox"><div class="al">Surplus</div><div class="av" id="af-s">—</div></div></div>'+
+    '<div id="af-flags"></div>'+
+    '<div class="srow"><div class="sring"><svg width="60" height="60" viewBox="0 0 60 60"><circle cx="30" cy="30" r="22" fill="none" stroke="#e2e8f0" stroke-width="6"/><circle cx="30" cy="30" r="22" fill="none" stroke="#0d3b5e" stroke-width="6" stroke-dasharray="138" id="w-arc" stroke-dashoffset="50" stroke-linecap="round"/></svg><div class="snum" id="w-sn">70</div></div><div><div class="slbl" id="w-sl">Good</div><div class="ssub" id="w-ss">Income meets threshold.</div></div></div>';}
+function ws4(){
+  var total=0,lines='';
+  for(var i=0;i<WZ.checks.length;i++){var c=CHECKS[WZ.checks[i]];if(c&&c.price>0){total+=c.price;lines+='<div class="ol"><span>'+c.icon+' '+c.name+'</span><span>'+fmt(c.price)+'</span></div>';}}
+  if(!lines)lines='<div class="ol"><span>Right to Rent (manual)</span><span>Free</span></div>';
+  return '<div class="ct">Payment</div><div class="obox">'+lines+'<div class="ol ot"><span>Total</span><span>'+fmt(total)+'</span></div></div>'+
+    (total>0?'<button class="btn btn-gd" onclick="openPMW('+total+')">Pay '+fmt(total)+' &amp; submit →</button>':'<button class="btn btn-nv" onclick="completeWiz()">Submit (no charge) →</button>');}
+function ws5(){
+  var pass=WZ.score>=65;
+  return '<div style="text-align:center;padding:1.25rem 0 .75rem"><div style="font-size:2.75rem;margin-bottom:.5rem">'+(pass?'✅':'⚠️')+'</div><div style="font-family:Playfair Display,serif;font-size:1.35rem;color:#0d3b5e;font-weight:600">'+(pass?'Recommended to proceed':'Review required')+'</div><p class="sm mt1">'+(pass?'All key checks passed.':'Consider requesting a guarantor.')+'</p></div>'+
+    '<div class="dr"><span class="drl">Property</span><span style="font-size:.82rem;font-weight:500;max-width:200px;text-align:right">'+(WZ.data.prop||'—')+'</span></div>'+
+    '<div class="dr"><span class="drl">Applicant</span><span style="font-weight:500">'+(WZ.data.fn||'')+' '+(WZ.data.ln||'')+'</span></div>'+
+    '<div class="dr"><span class="drl">Score</span><span style="font-weight:700;color:#0d3b5e">'+WZ.score+'/100</span></div>'+
+    '<div class="fr mt3" style="justify-content:center"><button class="btn btn-sm btn-ol" onclick="goBP(\'bp-apps\')">View applications</button><button class="btn btn-sm btn-nv" onclick="initWiz()">New application</button></div>';}
+function tCk(k,el){var i=WZ.checks.indexOf(k);if(i>-1)WZ.checks.splice(i,1);else WZ.checks.push(k);el.classList.toggle('on');}
+function mUpload(k,l,el){WZ.uploads[k]=true;el.classList.add('dn');el.innerHTML='<div class="upzic">✅</div><div class="upzt">'+l+' — uploaded</div><div class="upzs">Click to replace</div>';}
+function calcA(){
+  var inc=WZ.fin.income,out=WZ.fin.outgoings,debt=WZ.fin.debt,rent=WZ.data.rent||1200;
+  var net=Math.round((inc*0.8)/12),surplus=net-out-rent,ratio=inc>0?Math.round((rent*12/inc)*100):0,thresh=rent*12*2.5;
+  var ne=g('af-n'),re=g('af-r'),se=g('af-s');
+  if(!ne)return;
+  ne.textContent='£'+net.toLocaleString();
+  re.textContent=ratio+'%';re.className='av '+(ratio<35?'g':ratio<45?'w':'r');
+  se.textContent=(surplus>=0?'£':'-£')+Math.abs(Math.round(surplus)).toLocaleString();se.className='av '+(surplus>200?'g':surplus>0?'w':'r');
+  var flags=[{ok:inc>=thresh,p:'2.5× threshold met',f:'Below 2.5× annual rent'},{ok:surplus>0,p:'Positive monthly surplus',f:'Negative monthly surplus'},{ok:debt<inc*0.3,p:'Debt-to-income acceptable',f:'High debt-to-income'}];
+  var fh='',pc=0;for(var i=0;i<flags.length;i++){var fl=flags[i];if(fl.ok)pc++;fh+='<div class="flg '+(fl.ok?'p':'f')+'"><div class="fd">'+(fl.ok?'✓':'✗')+'</div>'+(fl.ok?fl.p:fl.f)+'</div>';}
+  var fe=g('af-flags');if(fe)fe.innerHTML=fh;
+  WZ.score=Math.round(40+(pc/flags.length)*55);
+  var arc=Math.round(138-(WZ.score/100)*138);
+  var ae=g('w-arc'),sn=g('w-sn'),sl=g('w-sl'),ss=g('w-ss');
+  if(ae){ae.setAttribute('stroke-dashoffset',arc);ae.style.stroke=WZ.score>=70?'#0d3b5e':WZ.score>=50?'#92400e':'#991b1b';}
+  if(sn)sn.textContent=WZ.score;
+  if(sl)sl.textContent=WZ.score>=70?'Good — likely to pass':WZ.score>=50?'Borderline':'High risk';
+  if(ss)ss.textContent=WZ.score>=70?'Income meets the 2.5× threshold.':'Consider requesting a guarantor.';}
+function wizNext(){
+  if(WZ.step===1){var cs=['con1','con2','con3','con4'];for(var i=0;i<cs.length;i++){var cb=g(cs[i]);if(!cb||!cb.checked){toast('Please confirm all consent checkboxes.','error');return;}}}
+  if(WZ.step===4){var total=0;for(var i=0;i<WZ.checks.length;i++){var c=CHECKS[WZ.checks[i]];if(c)total+=c.price;}if(total>0){openPMW(total);return;}completeWiz();return;}
+  WZ.step++;renderWiz();}
+function completeWiz(){
+  var res={};for(var i=0;i<WZ.checks.length;i++)res[WZ.checks[i]]='pass';
+  var na={id:'a_'+Date.now(),bizId:CU?CU.id:'',tenantId:null,tenantName:(WZ.data.fn||'')+' '+(WZ.data.ln||''),property:WZ.data.prop||'Unknown',rent:WZ.data.rent||1200,status:'complete',score:WZ.score,created:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),cr:res};
+  APPS.push(na);rApps();WZ.step=5;renderWiz();toast('Application saved.','success');}
+
+/* PAYMENT */
+var _pm={};
+function openPM(type,iid,label,amount){
+  _pm={type:type,iid:iid,label:label,amount:amount};
+  sv('pm-t',type==='plan'?'Subscribe — '+label:'Purchase: '+label);
+  var o=g('pm-o');if(o)o.innerHTML='<div class="ol"><span>'+label+'</span><span>'+fmt(amount)+'</span></div><div class="ol ot"><span>Total</span><span>'+fmt(amount)+'</span></div>';
+  var pe=g('pm-err');if(pe)pe.style.display='none';
+  var pn=g('pm-n');if(pn)pn.value='';var px=g('pm-e');if(px)px.value='';var pc=g('pm-c');if(pc)pc.value='';
+  var pnm=g('pm-nm');if(pnm)pnm.value=CU?CU.name:'';
+  var pb=g('pm-btn');if(pb){pb.disabled=false;pb.textContent='Pay '+fmt(amount);}
+  var m=g('pay-modal');if(m)m.classList.add('on');
+}
+function openPMW(amount){
+  _pm={type:'wizard',amount:amount};
+  var lines='';for(var i=0;i<WZ.checks.length;i++){var c=CHECKS[WZ.checks[i]];if(c&&c.price>0)lines+='<div class="ol"><span>'+c.icon+' '+c.name+'</span><span>'+fmt(c.price)+'</span></div>';}
+  sv('pm-t','Pay for vetting checks');
+  var o=g('pm-o');if(o)o.innerHTML=lines+'<div class="ol ot"><span>Total</span><span>'+fmt(amount)+'</span></div>';
+  var pe=g('pm-err');if(pe)pe.style.display='none';
+  var pn=g('pm-n');if(pn)pn.value='4242 4242 4242 4242';var px=g('pm-e');if(px)px.value='12/27';var pc=g('pm-c');if(pc)pc.value='123';
+  var pnm=g('pm-nm');if(pnm)pnm.value=CU?CU.name:'';
+  var pb=g('pm-btn');if(pb){pb.disabled=false;pb.textContent='Pay '+fmt(amount);}
+  var m=g('pay-modal');if(m)m.classList.add('on');
+}
+function closeMod(e){if(!e||e.target===g('pay-modal')){var m=g('pay-modal');if(m)m.classList.remove('on');}}
+function submitPay(){
+  var num=g('pm-n')?g('pm-n').value:'',exp=g('pm-e')?g('pm-e').value:'',cvc=g('pm-c')?g('pm-c').value.trim():'';
+  var err=g('pm-err'),btn=g('pm-btn');
+  if(err)err.style.display='none';
+  var n=num.replace(/\s/g,'');
+  if(!/^\d{16}$/.test(n)){if(err){err.textContent='Card must be 16 digits.';err.style.display='block';}return;}
+  if(!/^\d{2}\/\d{2}$/.test(exp)){if(err){err.textContent='Expiry must be MM/YY.';err.style.display='block';}return;}
+  if(!/^\d{3,4}$/.test(cvc)){if(err){err.textContent='CVC must be 3-4 digits.';err.style.display='block';}return;}
+  if(n==='4000000000000002'){if(err){err.textContent='Card declined.';err.style.display='block';}return;}
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spin"></span> Processing\u2026';}
+  setTimeout(function(){
+    if(btn){btn.disabled=false;btn.textContent='Pay '+fmt(_pm.amount);}
+    var m=g('pay-modal');if(m)m.classList.remove('on');
+    if(CU)PAYS.push({id:'p_'+Date.now(),bid:CU.id,desc:_pm.label||'Vetting',amount:_pm.amount,date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),last4:n.slice(-4)});
+    toast('Payment of '+fmt(_pm.amount)+' successful!','success');
+    if(_pm.type==='plan'&&CU){var p=PLANS[_pm.iid];if(p){CU.plan=_pm.iid;CU.credits=p.credits;}rBilling();sv('d-plan',cap(CU.plan));sv('d-cred',cr(CU));sv('ov-cred',cr(CU));}
+    if(_pm.type==='wizard')completeWiz();
+    if(_pm.type==='check')rPayTbl();
+  },1400);
+}
+
+/* INIT */
+window.addEventListener('load',function(){
+  var pw=g('li-pw');
+  if(pw)pw.addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+});
+</script>
+</body>
+</html>
