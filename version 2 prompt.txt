@@ -16,7 +16,10 @@ Admin View Increase size of Delay & New Booking Button x 2
 
 Payments
 Admin View Job Payments Include Paid Jobs in this list when payment received 
+Admin View communicate options for payment explaining that the customer should utilise the job reference in any payment 
 Admin View Payment Method can be by Bank Payment (Manual confirmation button required by admin user or a Card Payment Automatically reconciles using job reference entered sent in link
 Admin View reinstate 'send payment link' to customer via SMS, E-mail.
 
-Admin View Communications display view of all communications sent and differentiate by type
+Communications
+Admin View display view of all communications sent and differentiate by type
+Admin view include whether customer appointment has been accepted 
