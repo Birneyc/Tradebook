@@ -3,7 +3,20 @@ Tradesperson View For New Bookings expand address fields to House Number, Town, 
 Tradesperson View Display a calendar view of individual tradesperson schedule
 Tradesperson View allow flexible calendar display using selected date range up to 12 months
 Tradesperson View Remove ability to change job status - this is an admin function
-Tradesperson Change 'Report Delay' button to 'Report Delay to Customer'
+Tradesperson View Change 'Report Delay' button to 'Report Delay to Customer'
+Tradeperson View Increase size of Delay & New Booking Button x 2
 
 Tradesperson View Messages - In Booking Details remove messages box - is this needed? MATT
 Tradesperson View Can the calendar .ics invite button be greyed out after Invite accepted from customer? MATT
+
+Admin View allow flexible calendar display using selected date range up to 12 months
+Admin view create a team concept so that multiple tradepeople can be asscociated to one job reference 
+Admin View messaging and communications e.g. delays can be shared with team members associated with the same job
+Admin View Increase size of Delay & New Booking Button x 2
+
+Payments
+Admin View Job Payments Include Paid Jobs in this list when payment received 
+Admin View Payment Method can be by Bank Payment (Manual confirmation button required by admin user or a Card Payment Automatically reconciles using job reference entered sent in link
+Admin View reinstate 'send payment link' to customer via SMS, E-mail.
+
+Admin View Communications display view of all communications sent and differentiate by type
