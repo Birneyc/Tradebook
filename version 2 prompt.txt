@@ -1,0 +1,9 @@
+Tradesperson View allow a photo to be added or uploaded to Profile.
+Tradesperson View For New Bookings expand address fields to House Number, Town, City, County and postcode.
+Tradesperson View Display a calendar view of individual tradesperson schedule
+Tradesperson View allow flexible calendar display using selected date range up to 12 months
+Tradesperson View Remove ability to change job status - this is an admin function
+Tradesperson Change 'Report Delay' button to 'Report Delay to Customer'
+
+Tradesperson View Messages - In Booking Details remove messages box - is this needed? MATT
+Tradesperson View Can the calendar .ics invite button be greyed out after Invite accepted from customer? MATT
