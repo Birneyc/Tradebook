@@ -1,0 +1,34 @@
+The open folder is a pocket html site that demonstrates the concept for a new web app. The content is currently using stub data files and is not functional. Read the website and build a plan that Claude code can use to create a php back end web app using a mysql database. Interaction between the front end and the back end is through API calls. The API calls will need an authentication code that is assigned to the user at login and used for the duration of the session. The auth code expires 30 minutes after the user stops using the site. The front end should conform to accessibility standards and work on mobile devices as well as pc’s. The plan should explain the different work streams needed to complete the web app and the standards and conventions that will be used. This plan is to be reviewed before giving approval for Claude code to build the web app.
+
+The payment gateway provider will be revolut, There is no need to have a light or dark theme - just light. The system will be hosted on AWS ec2 windows web server with configured SNS for email and messaging. Any phone call requirements will be handled by the device (built in phone capability).
+
+Revolut sandbox is available to use but put in placeholder for now until we are ready to add payments in. SES will use the @evrtek.com domain. There is no ofcom registration for SMS as this is development stage only at the moment. We will add in contact number registration at a later date. question 4 - yes, add in an email field. 5. Different jobs will have different times for different tradespeople. Make this configurable by individual so each trades person can set up their own job types and durations.
+
+The trades person or the admin team should be able to send a payment link with an invoice to a customer. This can be sent by email, messager or whatsapp. There should also be an option to add files to the booking and can include file types such as invoices, quotes and completion certificates. The system should allow a folder to hold file templates that can be added to job types and completed with job details. Completed templates should be exported as a pdf ready to be attached to a job.
+
+The system should allow a chat functionality between the customer and the trades person and any admin. The customer has a link to the job in the tradebook system and can see the conversation on the website. They can add comments to the chat. If the customer sends a message to the system, it should be added to the chat by the system as a new comment. The trades person or admin can add chat messages through the tradebook system.
+
+Whatsapp functionality should be placeholder until API access is permitted. Create a stub file that returns a positive result and the functionality will be added at a later time.
+
+For dev, use local mysql server with user "matt" and password "M777evr13??" add create database script to the requirements.
+
+Stored procedures should be used for all database interactions and all input to the database should be checked for SQL injection attacks.
+
+The web app will eventually be accessed over https but this will be offloaded by the infrastructure before it reaches the web server. There should be a switch in the config to move links from http to https depending on if the system is in dev or uat (http) or prod (https)
+
+I want the database to use autoincrement INT values as the primary ID but also a secondary key of a hashed value of the ID and date/time the row was created. The secondary key will be used as look up value from the front end.
+
+look at the HTML in /reference folder (index.html) for more details about how the pages should look. This is how the pages should be formated. Any pages that list users, businesses, bookings or anything else should show a table even if it is empty.
+
+When adding a booking, if a tradesperson is selected, you should only be able to select dates that the tradeperson has put as their availability. For example, if the tradesperson only works on wednesdays and thursdays, the calendar tool should not allow other days to be selected. If the tradeperson has not selected a working pattern, any day can be selected.
+
+Job listings (or bookings listings) should have links to email, phone, sms or whatsapp that open the on device app for that contact method.
+
+if a user clicks "delay" it should show a screen with all that days bookings in a list with filters by tradesperson, status, or customer and the user can select which bookings are impapcted with a checkbox and then confirm delay. The user should be prompted with an input box to add a message. This will then be sent to all impacted bookings via their prefered update contact preference.
+
+There should be a customer page where a customer logs in with the business 'slug' from the database and a short 8chr alpha numeric code. This allows the customer to view only their job but can comment, update details and upload / download files such as images, video or text documents. 
+
+on the subscriptions page, all the options should still be shown even if one is selected. In this case the option that has been selected should be highlighted and ad wording "current subscription" and allow the user to select a new subscription. When a user changes subscription, they are immediately moved on to that subscription but if a user cancels completely, they should still remain active for 1 week like a trial until the account is cancelled. The user that cancels should be told that they have 1 week before the account is closed.
+
+
+The login screen should have an option to create an account. This should take the user to a screen where they can select to create a business account or a tradesperson account. The account creation screen should use a recaptcha to discourage bots from creating an account. The accounts created should be trial accounts but the user needs to validate a credit card payment method. The credit card validation will need to be added later and so a stub payment system is fine for now.
