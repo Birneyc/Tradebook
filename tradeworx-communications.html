@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tradeworx — Customer Communications</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #080c14;
+  --surface: #0d1421;
+  --surface2:#111929;
+  --border:  #1e2d45;
+  --accent:  #00d4b4;
+  --accent2: #0099cc;
+  --text:    #e8f0fe;
+  --muted:   #64748b;
+  --green:   #22c55e;
+  --amber:   #f59e0b;
+  --red:     #f43f5e;
+  --r:       12px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.65;
+}
+
+/* ── HEADER ── */
+.header {
+  background: linear-gradient(135deg, #0d1421 0%, #111929 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 40px 48px;
+}
+.header-logo {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 28px;
+}
+.logo-mark {
+  width: 44px; height: 44px; border-radius: 11px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.logo-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px; font-weight: 700; letter-spacing: -.03em;
+}
+.logo-sub {
+  font-size: 11px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .06em;
+}
+.header h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 32px; font-weight: 700; letter-spacing: -.03em;
+  margin-bottom: 8px;
+}
+.header-sub {
+  font-size: 15px; color: var(--muted); max-width: 560px; line-height: 1.6;
+}
+.header-tags {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px;
+}
+.tag {
+  padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  border: 1px solid;
+}
+.tag-sms    { background: rgba(34,197,94,.1);  color: var(--green); border-color: rgba(34,197,94,.25); }
+.tag-wa     { background: rgba(37,211,102,.1); color: #25d366;      border-color: rgba(37,211,102,.25); }
+.tag-email  { background: rgba(56,189,248,.1); color: #38bdf8;      border-color: rgba(56,189,248,.25); }
+
+/* ── LAYOUT ── */
+.container { max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
+
+/* ── NOTE CARDS ── */
+.note-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); margin-bottom: 32px; overflow: hidden;
+}
+.note-card-header {
+  padding: 20px 28px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: 16px;
+  background: var(--surface2);
+}
+.note-icon {
+  width: 42px; height: 42px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 18px;
+}
+.note-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 500; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .08em;
+  margin-bottom: 4px;
+}
+.note-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px; font-weight: 600; letter-spacing: -.02em;
+  margin-bottom: 3px;
+}
+.note-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.note-channels {
+  margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end;
+}
+.channel-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.ch-sms   { background: var(--green); }
+.ch-wa    { background: #25d366; }
+.ch-email { background: #38bdf8; }
+.channel-pill {
+  font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px;
+  text-transform: uppercase; letter-spacing: .04em;
+  display: flex; align-items: center; gap: 5px;
+}
+.channel-pill.sms   { background: rgba(34,197,94,.1);  color: var(--green); border: 1px solid rgba(34,197,94,.2); }
+.channel-pill.wa    { background: rgba(37,211,102,.1); color: #25d366;      border: 1px solid rgba(37,211,102,.2); }
+.channel-pill.email { background: rgba(56,189,248,.1); color: #38bdf8;      border: 1px solid rgba(56,189,248,.2); }
+
+/* ── MESSAGE BODY ── */
+.note-body { padding: 28px; }
+
+/* Phone/SMS mockup */
+.phone-preview {
+  background: #111929; border: 1px solid var(--border); border-radius: 16px;
+  overflow: hidden; margin-bottom: 20px; max-width: 380px;
+}
+.phone-header {
+  background: #0d1421; padding: 10px 16px; display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.phone-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #080c14;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.phone-contact { font-size: 13px; font-weight: 600; }
+.phone-contact-sub { font-size: 11px; color: var(--muted); }
+.phone-body { padding: 16px 14px; }
+.sms-bubble {
+  background: var(--accent);
+  color: #080c14;
+  border-radius: 16px 16px 4px 16px;
+  padding: 12px 16px;
+  font-size: 13px;
+  line-height: 1.65;
+  font-weight: 500;
+  max-width: 310px;
+  margin-left: auto;
+}
+.sms-time {
+  font-size: 10px; color: var(--muted); text-align: right;
+  margin-top: 6px; font-family: 'JetBrains Mono', monospace;
+}
+
+/* Email mockup */
+.email-preview {
+  background: #0a101c; border: 1px solid var(--border); border-radius: 12px;
+  overflow: hidden; margin-bottom: 20px;
+}
+.email-client-bar {
+  background: var(--surface); padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.email-dot { width: 10px; height: 10px; border-radius: 50%; }
+.email-header-row {
+  padding: 16px 24px 0; font-size: 12px; color: var(--muted);
+  display: flex; flex-direction: column; gap: 5px;
+  border-bottom: 1px solid var(--border); padding-bottom: 14px;
+}
+.email-header-row span { color: var(--text); font-weight: 500; }
+.email-subject {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px; font-weight: 600; letter-spacing: -.02em;
+  padding: 16px 24px 0; margin-bottom: 20px;
+}
+.email-body { padding: 0 24px 24px; font-size: 14px; color: #c4d4e8; line-height: 1.8; }
+.email-body p { margin-bottom: 14px; }
+.email-body p:last-child { margin-bottom: 0; }
+.email-highlight {
+  background: rgba(0,212,180,.06); border: 1px solid rgba(0,212,180,.15);
+  border-left: 3px solid var(--accent); border-radius: 6px;
+  padding: 12px 16px; margin: 16px 0; font-size: 13px;
+}
+.email-highlight strong { color: var(--accent); }
+.email-sig { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+.email-sig-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: -.01em;
+}
+.email-sig-detail { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.email-footer {
+  background: var(--surface); padding: 12px 24px;
+  border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--muted); line-height: 1.6;
+}
+
+/* Variables legend */
+.variables-row {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px;
+}
+.var-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--accent);
+  background: rgba(0,212,180,.08); border: 1px solid rgba(0,212,180,.2);
+  border-radius: 5px; padding: 2px 8px;
+}
+.note-meta {
+  font-size: 12px; color: var(--muted); padding-top: 16px;
+  border-top: 1px solid var(--border); margin-top: 16px; line-height: 1.7;
+}
+.note-meta strong { color: var(--text); }
+
+/* Divider */
+.section-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--muted);
+  display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* Tone guide */
+.tone-row {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px; margin-top: 16px; margin-bottom: 8px;
+}
+.tone-item {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 14px;
+}
+.tone-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--muted); margin-bottom: 5px;
+}
+.tone-value { font-size: 13px; font-weight: 500; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" width="22" height="22">
+        <path d="M4 24 L14 4 L24 24" stroke="#080c14" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
+        <path d="M8 17 L14 4 L20 17" stroke="#080c14" stroke-width="2" stroke-linejoin="round" fill="none" opacity=".6"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-name">Tradeworx</div>
+      <div class="logo-sub">Field Service Platform</div>
+    </div>
+  </div>
+  <h1>Customer Communications</h1>
+  <p class="header-sub">Five core messages that cover every stage of the customer journey — from first contact to final payment. Each is written to feel personal, professional, and on-brand.</p>
+  <div class="header-tags">
+    <span class="tag tag-sms">💬 SMS</span>
+    <span class="tag tag-wa">● WhatsApp</span>
+    <span class="tag tag-email">✉ Email</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- TONE GUIDE -->
+  <div class="section-label">Brand voice</div>
+  <div class="tone-row">
+    <div class="tone-item"><div class="tone-label">Tone</div><div class="tone-value">Warm but efficient</div></div>
+    <div class="tone-item"><div class="tone-label">Formality</div><div class="tone-value">Professional, not corporate</div></div>
+    <div class="tone-item"><div class="tone-label">First name</div><div class="tone-value">Always use it</div></div>
+    <div class="tone-item"><div class="tone-label">Length</div><div class="tone-value">Short for SMS, fuller for email</div></div>
+    <div class="tone-item"><div class="tone-label">Sign-off</div><div class="tone-value">— Tradeworx or team name</div></div>
+    <div class="tone-item"><div class="tone-label">Emoji</div><div class="tone-value">Minimal, functional only</div></div>
+  </div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:40px;line-height:1.7">Every message uses the customer's first name and includes a booking reference. Never send a message that a customer could read and think "this is automated" — even when it is.</p>
+
+
+  <!-- ══ 1. WELCOME ══ -->
+  <div class="section-label">01 — Welcome</div>
+  <div class="note-card">
+    <div class="note-card-header">
+      <div class="note-icon" style="background:rgba(0,212,180,.1);color:var(--accent)">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M10 2a8 8 0 1 0 0 16A8 8 0 0 0 10 2z"/><path d="M10 6v4l3 3"/></svg>
+      </div>
+      <div>
+        <div class="note-number">Message 01</div>
+        <div class="note-title">Welcome to Tradeworx</div>
+        <div class="note-desc">Sent when a customer is first registered on the platform — before any booking is made. Sets the tone and tells them what to expect.</div>
+      </div>
+      <div class="note-channels">
+        <span class="channel-pill email">✉ Email</span>
+      </div>
+    </div>
+    <div class="note-body">
+      <div class="email-preview">
+        <div class="email-client-bar">
+          <div class="email-dot" style="background:#f43f5e"></div>
+          <div class="email-dot" style="background:#f59e0b"></div>
+          <div class="email-dot" style="background:#22c55e"></div>
+        </div>
+        <div class="email-header-row">
+          <div>From: <span>Tradeworx &lt;hello@tradeworx.works&gt;</span></div>
+          <div>To: <span>Sarah Clarke &lt;sarah@example.com&gt;</span></div>
+        </div>
+        <div class="email-subject">You're now with Tradeworx</div>
+        <div class="email-body">
+          <p>Hi Sarah,</p>
+          <p>Welcome — we're really glad you're here.</p>
+          <p>We're Tradeworx, and we handle the scheduling, communications, and payment side of your service visits so you only have to deal with the work itself. From the moment a booking is made to the receipt landing in your inbox, we'll keep you informed every step of the way.</p>
+          <p>Here's what you can expect from us:</p>
+          <div class="email-highlight">
+            <strong>Booking confirmed</strong> — you'll hear from us as soon as your appointment is set, with your engineer's name, arrival time, and a reference number.<br><br>
+            <strong>Day-of reminder</strong> — a quick message on the morning of your visit so nothing slips through.<br><br>
+            <strong>Any changes</strong> — if anything shifts, you'll know straight away — no surprises.
+          </div>
+          <p>You can always reply to any message we send and someone will get back to you. We don't do automated replies that go nowhere.</p>
+          <p>Looking forward to working with you.</p>
+          <div class="email-sig">
+            <div class="email-sig-name">The Tradeworx Team</div>
+            <div class="email-sig-detail">hello@tradeworx.works · tradeworx.works</div>
+          </div>
+        </div>
+        <div class="email-footer">
+          You're receiving this because your details were registered on the Tradeworx platform. Reply to unsubscribe at any time.
+        </div>
+      </div>
+      <div class="note-meta">
+        <strong>When to send:</strong> On first registration, before any booking exists. Can also be used when an existing customer is added to a new business on the platform.<br>
+        <strong>Tone note:</strong> Warm and informative — not a legal disclaimer. The goal is to make the customer feel looked after before anything has even happened.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══ 2. NEW APPOINTMENT ══ -->
+  <div class="section-label">02 — New Appointment</div>
+  <div class="note-card">
+    <div class="note-card-header">
+      <div class="note-icon" style="background:rgba(56,189,248,.1);color:#38bdf8">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect x="3" y="4" width="14" height="13" rx="2"/><path d="M7 2v3M13 2v3M3 8h14"/><rect x="7" y="11" width="2" height="2" rx=".5" fill="currentColor" stroke="none"/></svg>
+      </div>
+      <div>
+        <div class="note-number">Message 02</div>
+        <div class="note-title">New Appointment Confirmed</div>
+        <div class="note-desc">Sent immediately after admin confirms a booking. Gives the customer everything they need: who, when, where, and a reference.</div>
+      </div>
+      <div class="note-channels">
+        <span class="channel-pill sms">💬 SMS</span>
+        <span class="channel-pill wa">● WhatsApp</span>
+      </div>
+    </div>
+    <div class="note-body">
+      <!-- SMS version -->
+      <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;">SMS / WhatsApp</p>
+      <div class="phone-preview">
+        <div class="phone-header">
+          <div class="phone-avatar">TW</div>
+          <div>
+            <div class="phone-contact">Tradeworx</div>
+            <div class="phone-contact-sub">tradeworx.works</div>
+          </div>
+        </div>
+        <div class="phone-body">
+          <div class="sms-bubble">
+            Hi Sarah, your appointment is confirmed. James Holloway will be with you on Tue 18 Mar at 10:00am at 42 Cedar Street, Hucknall. Your reference is #B3F9A1. We look forward to seeing you — Tradeworx
+          </div>
+          <div class="sms-time">Delivered · 09:14</div>
+        </div>
+      </div>
+
+      <!-- Email version -->
+      <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;margin-top:24px;">Email (extended version)</p>
+      <div class="email-preview">
+        <div class="email-client-bar">
+          <div class="email-dot" style="background:#f43f5e"></div>
+          <div class="email-dot" style="background:#f59e0b"></div>
+          <div class="email-dot" style="background:#22c55e"></div>
+        </div>
+        <div class="email-header-row">
+          <div>From: <span>Tradeworx &lt;bookings@tradeworx.works&gt;</span></div>
+          <div>To: <span>Sarah Clarke &lt;sarah@example.com&gt;</span></div>
+        </div>
+        <div class="email-subject">Your appointment is confirmed — Ref #B3F9A1</div>
+        <div class="email-body">
+          <p>Hi Sarah,</p>
+          <p>Great news — your appointment is confirmed. Here are the details:</p>
+          <div class="email-highlight">
+            <strong>Date &amp; time:</strong> Tuesday 18 March, 10:00am<br>
+            <strong>Engineer:</strong> James Holloway<br>
+            <strong>Address:</strong> 42 Cedar Street, Hucknall, NG15 7AB<br>
+            <strong>Job:</strong> Consumer unit upgrade and rewire<br>
+            <strong>Reference:</strong> #B3F9A1
+          </div>
+          <p>James will aim to arrive right on time. If anything changes on our end, you'll be the first to know. If you need to reach us before the appointment, just reply to this email.</p>
+          <p>See you on Tuesday.</p>
+          <div class="email-sig">
+            <div class="email-sig-name">The Tradeworx Team</div>
+            <div class="email-sig-detail">bookings@tradeworx.works</div>
+          </div>
+        </div>
+        <div class="email-footer">
+          Ref #B3F9A1 · If you need to reschedule, please reply directly to this email.
+        </div>
+      </div>
+
+      <div class="variables-row">
+        <span class="var-chip">{first_name}</span>
+        <span class="var-chip">{engineer_name}</span>
+        <span class="var-chip">{date_time}</span>
+        <span class="var-chip">{address}</span>
+        <span class="var-chip">{job_description}</span>
+        <span class="var-chip">{booking_ref}</span>
+      </div>
+      <div class="note-meta">
+        <strong>When to send:</strong> Automatically on booking confirmation. Triggered in Tradeworx when admin clicks Confirm.<br>
+        <strong>Tone note:</strong> Factual and reassuring. The customer needs confidence that someone is coming — give them the name, not just a job title.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══ 3. DELAYED APPOINTMENT ══ -->
+  <div class="section-label">03 — Delayed Appointment</div>
+  <div class="note-card">
+    <div class="note-card-header">
+      <div class="note-icon" style="background:rgba(245,158,11,.1);color:var(--amber)">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l2.5 2.5"/><path d="M7 2.5L10 1l3 1.5"/></svg>
+      </div>
+      <div>
+        <div class="note-number">Message 03</div>
+        <div class="note-title">Appointment Running Late</div>
+        <div class="note-desc">Sent as soon as a delay is reported — by admin or the engineer directly. Acknowledges the inconvenience without over-apologising.</div>
+      </div>
+      <div class="note-channels">
+        <span class="channel-pill sms">💬 SMS</span>
+        <span class="channel-pill wa">● WhatsApp</span>
+      </div>
+    </div>
+    <div class="note-body">
+      <div class="phone-preview">
+        <div class="phone-header">
+          <div class="phone-avatar">TW</div>
+          <div>
+            <div class="phone-contact">Tradeworx</div>
+            <div class="phone-contact-sub">tradeworx.works</div>
+          </div>
+        </div>
+        <div class="phone-body">
+          <div class="sms-bubble">
+            Hi Sarah, we're really sorry — your 10:00am appointment is running approximately 30 minutes late due to a previous job overrunning. James is now expected to arrive around 10:30am. We appreciate your patience. If you need to reach us in the meantime, please reply to this message — Tradeworx
+          </div>
+          <div class="sms-time">Delivered · 09:47</div>
+        </div>
+      </div>
+      <div class="variables-row">
+        <span class="var-chip">{first_name}</span>
+        <span class="var-chip">{original_time}</span>
+        <span class="var-chip">{delay_duration}</span>
+        <span class="var-chip">{delay_reason}</span>
+        <span class="var-chip">{new_eta}</span>
+        <span class="var-chip">{engineer_name}</span>
+      </div>
+      <div class="note-meta">
+        <strong>When to send:</strong> Immediately when a delay is reported in Tradeworx. The message preview is auto-generated from the delay duration and reason selected — the engineer or admin sends it in one tap.<br>
+        <strong>Tone note:</strong> Lead with the apology, but keep it brief. Give the new ETA immediately — that's all the customer actually needs. Don't over-explain or list multiple reasons.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══ 4. PAYMENT REMINDER ══ -->
+  <div class="section-label">04 — Payment Reminder</div>
+  <div class="note-card">
+    <div class="note-card-header">
+      <div class="note-icon" style="background:rgba(250,204,21,.1);color:#facc15">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect x="2" y="6" width="16" height="10" rx="1.5"/><path d="M2 9.5h16"/><path d="M5 13h4"/></svg>
+      </div>
+      <div>
+        <div class="note-number">Message 04</div>
+        <div class="note-title">Payment Due Reminder</div>
+        <div class="note-desc">Sent after job completion if payment is still outstanding. Polite but clear — includes amount, reference, and a payment link.</div>
+      </div>
+      <div class="note-channels">
+        <span class="channel-pill sms">💬 SMS</span>
+        <span class="channel-pill wa">● WhatsApp</span>
+        <span class="channel-pill email">✉ Email</span>
+      </div>
+    </div>
+    <div class="note-body">
+      <!-- SMS version -->
+      <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;">SMS / WhatsApp</p>
+      <div class="phone-preview">
+        <div class="phone-header">
+          <div class="phone-avatar">TW</div>
+          <div>
+            <div class="phone-contact">Tradeworx</div>
+            <div class="phone-contact-sub">tradeworx.works</div>
+          </div>
+        </div>
+        <div class="phone-body">
+          <div class="sms-bubble">
+            Hi Sarah, a quick note regarding your recent visit (Ref #B3F9A1). The balance of £336.00 including VAT is now due. You can pay securely here: tradeworx.works/pay/cs_B3F9A1 — or simply reply and we can arrange another way. Thanks — Tradeworx
+          </div>
+          <div class="sms-time">Delivered · 15:02</div>
+        </div>
+      </div>
+
+      <!-- Email version -->
+      <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;margin-top:24px;">Email</p>
+      <div class="email-preview">
+        <div class="email-client-bar">
+          <div class="email-dot" style="background:#f43f5e"></div>
+          <div class="email-dot" style="background:#f59e0b"></div>
+          <div class="email-dot" style="background:#22c55e"></div>
+        </div>
+        <div class="email-header-row">
+          <div>From: <span>Tradeworx &lt;invoices@tradeworx.works&gt;</span></div>
+          <div>To: <span>Sarah Clarke &lt;sarah@example.com&gt;</span></div>
+        </div>
+        <div class="email-subject">Payment due — Ref #B3F9A1</div>
+        <div class="email-body">
+          <p>Hi Sarah,</p>
+          <p>Hope everything went well with the visit. Just a quick note to let you know the payment for your recent appointment is now due.</p>
+          <div class="email-highlight">
+            <strong>Job:</strong> Consumer unit upgrade and rewire<br>
+            <strong>Completed:</strong> Tuesday 18 March<br>
+            <strong>Amount due:</strong> £280.00 + VAT (£56.00) = <strong style="color:var(--accent)">£336.00</strong><br>
+            <strong>Reference:</strong> #B3F9A1
+          </div>
+          <p>You can pay securely online using the button below, or reply to this email if you'd prefer to pay by bank transfer or have any questions about the invoice.</p>
+          <div style="margin:20px 0">
+            <a href="#" style="display:inline-block;background:linear-gradient(135deg,#00d4b4,#0099cc);color:#080c14;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;padding:12px 28px;border-radius:8px;text-decoration:none;letter-spacing:-.01em;">Pay £336.00 →</a>
+          </div>
+          <p>Payment is due within 7 days. If you've already sent this, please ignore this message — and thank you.</p>
+          <div class="email-sig">
+            <div class="email-sig-name">The Tradeworx Team</div>
+            <div class="email-sig-detail">invoices@tradeworx.works</div>
+          </div>
+        </div>
+        <div class="email-footer">
+          Ref #B3F9A1 · This is a payment reminder. If you have a query, please reply directly.
+        </div>
+      </div>
+
+      <div class="variables-row">
+        <span class="var-chip">{first_name}</span>
+        <span class="var-chip">{booking_ref}</span>
+        <span class="var-chip">{amount_inc_vat}</span>
+        <span class="var-chip">{payment_link}</span>
+        <span class="var-chip">{job_description}</span>
+        <span class="var-chip">{completion_date}</span>
+      </div>
+      <div class="note-meta">
+        <strong>When to send:</strong> Generated from Job Payments view when admin clicks "Generate Link". The Stripe Checkout link is embedded automatically. Can be resent if unpaid after 7 days.<br>
+        <strong>Tone note:</strong> Never use words like "outstanding", "overdue", or "failure to pay". Keep it factual and friendly — most late payments are genuinely forgotten, not avoided.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══ 5. THANK YOU ══ -->
+  <div class="section-label">05 — Thank You</div>
+  <div class="note-card">
+    <div class="note-card-header">
+      <div class="note-icon" style="background:rgba(34,197,94,.1);color:var(--green)">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M17 9.5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"/><path d="M7 9.5l2.5 2.5 4-4"/></svg>
+      </div>
+      <div>
+        <div class="note-number">Message 05</div>
+        <div class="note-title">Thank You &amp; Receipt</div>
+        <div class="note-desc">Sent automatically once payment is confirmed. Closes the loop professionally with a receipt attached and a light invite to get in touch again.</div>
+      </div>
+      <div class="note-channels">
+        <span class="channel-pill sms">💬 SMS</span>
+        <span class="channel-pill email">✉ Email</span>
+      </div>
+    </div>
+    <div class="note-body">
+      <!-- SMS version -->
+      <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;">SMS (short form)</p>
+      <div class="phone-preview">
+        <div class="phone-header">
+          <div class="phone-avatar">TW</div>
+          <div>
+            <div class="phone-contact">Tradeworx</div>
+            <div class="phone-contact-sub">tradeworx.works</div>
+          </div>
+        </div>
+        <div class="phone-body">
+          <div class="sms-bubble">
+            Hi Sarah, payment received — thank you. Your receipt for £336.00 (Ref #B3F9A1) is on its way to your inbox. We hope the job went smoothly. Don't hesitate to get in touch if you ever need us again — Tradeworx
+          </div>
+          <div class="sms-time">Delivered · 15:17</div>
+        </div>
+      </div>
+
+      <!-- Email version -->
+      <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;margin-top:24px;">Email (with receipt)</p>
+      <div class="email-preview">
+        <div class="email-client-bar">
+          <div class="email-dot" style="background:#f43f5e"></div>
+          <div class="email-dot" style="background:#f59e0b"></div>
+          <div class="email-dot" style="background:#22c55e"></div>
+        </div>
+        <div class="email-header-row">
+          <div>From: <span>Tradeworx &lt;receipts@tradeworx.works&gt;</span></div>
+          <div>To: <span>Sarah Clarke &lt;sarah@example.com&gt;</span></div>
+        </div>
+        <div class="email-subject">Thank you — Receipt for £336.00 enclosed</div>
+        <div class="email-body">
+          <p>Hi Sarah,</p>
+          <p>Payment received — thank you. We really appreciate it.</p>
+          <p>Your receipt is attached to this email. Here's a summary for your records:</p>
+          <div class="email-highlight">
+            <strong>Job:</strong> Consumer unit upgrade and rewire<br>
+            <strong>Engineer:</strong> James Holloway<br>
+            <strong>Completed:</strong> Tuesday 18 March<br>
+            <strong>Subtotal:</strong> £280.00<br>
+            <strong>VAT (20%):</strong> £56.00<br>
+            <strong>Total paid:</strong> <span style="color:var(--green);font-weight:700">£336.00 ✓</span><br>
+            <strong>Reference:</strong> #B3F9A1
+          </div>
+          <p>We hope everything was to a high standard. If you have any feedback — good or otherwise — we're always glad to hear it. Just reply to this email.</p>
+          <p>Whenever you next need us, we'll be here.</p>
+          <div class="email-sig">
+            <div class="email-sig-name">The Tradeworx Team</div>
+            <div class="email-sig-detail">receipts@tradeworx.works · tradeworx.works</div>
+          </div>
+        </div>
+        <div class="email-footer">
+          Ref #B3F9A1 · Receipt attached as PDF. Please keep this for your records.
+        </div>
+      </div>
+
+      <div class="variables-row">
+        <span class="var-chip">{first_name}</span>
+        <span class="var-chip">{amount_paid}</span>
+        <span class="var-chip">{booking_ref}</span>
+        <span class="var-chip">{engineer_name}</span>
+        <span class="var-chip">{job_description}</span>
+        <span class="var-chip">{completion_date}</span>
+        <span class="var-chip">{receipt_pdf}</span>
+      </div>
+      <div class="note-meta">
+        <strong>When to send:</strong> Automatically triggered when Stripe confirms payment (webhook) or when admin manually marks as paid. Receipt PDF is generated from Tradeworx and attached or linked.<br>
+        <strong>Tone note:</strong> Keep it warm and brief. The customer has paid — they don't need an upsell or a survey. Just close gracefully and leave the door open for next time.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- FOOTER NOTE -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px 28px;margin-top:8px;">
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;margin-bottom:10px;letter-spacing:-.01em;">Using these templates in Tradeworx</div>
+    <p style="font-size:13px;color:var(--muted);line-height:1.75">Messages 02, 03, and 04 are generated automatically by the platform using the booking data — the variables in <span style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:12px;background:rgba(0,212,180,.08);padding:1px 6px;border-radius:4px">{curly braces}</span> are filled in at send time. Message 05 fires via the Stripe webhook when payment is confirmed. Message 01 can be customised per-business in a future release. All messages respect the Default Channel setting in the Communications view — switch between SMS, WhatsApp, or both without changing the message content.</p>
+  </div>
+
+</div>
+</body>
+</html>
