@@ -1,0 +1,16 @@
+Desktop testing
+Quotes - Duplicate Entries adding a new Quote with Multiple Line Items
+Error when sending New Quote displayed but still sent
+Delay - error delay minutes must be a positive integer
+Add timestamp to all communications?
+e-mail link defaults to main MS account - could we link to Gmail?
+Error when sending invoice - JSON error - but if discard changes it still is marked as sent
+
+Logging in as customer into portal - error - the string did not match the expected pattern when sending a message. Message still sends
+Could the messaging app make a noise when sending / receiving?
+Bookings that have gone past their scheduled start date should be marked as 'Overdue'? Highlight in Red perhaps?
+
+Communications 
+SMS / Email filter - does this work?
+Review communications screen - should be timestamped - quite confusing.
+Phone notifications would be good to have on every message.
